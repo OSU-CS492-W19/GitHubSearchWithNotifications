@@ -35,10 +35,6 @@ public class MainActivity extends AppCompatActivity
             NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String REPOS_ARRAY_KEY = "githubRepos";
-    private static final String SEARCH_URL_KEY = "githubSearchURL";
-
-    private static final int GITHUB_SEARCH_LOADER_ID = 0;
 
     private RecyclerView mSearchResultsRV;
     private EditText mSearchBoxET;

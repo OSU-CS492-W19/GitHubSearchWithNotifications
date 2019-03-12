@@ -15,5 +15,6 @@ public class GitHubRepo implements Serializable {
 
     public String description;
     public String html_url;
+    public String url;
     public int stargazers_count;
 }

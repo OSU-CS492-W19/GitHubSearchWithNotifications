@@ -102,4 +102,10 @@ public class GitHubUtils {
             return null;
         }
     }
+
+    public static GitHubRepo parseGitHubRepoResults(String json) {
+        Gson gson = new Gson();
+        GitHubRepo results = gson.fromJson(json, GitHubRepo.class);
+        return results;
+    }
 }

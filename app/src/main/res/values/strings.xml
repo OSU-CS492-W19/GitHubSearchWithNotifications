@@ -13,7 +13,8 @@
     <string name="nav_settings">Settings</string>
 
     <!-- Strings related to stars notification -->
-    <string name="stars_notification_channel">Star count updates</string>
+    <string name="stars_notification_channel" translatable="false">starsNotificationChannel</string>
+    <string name="stars_notification_channel_title">Star count updates</string>
     <string name="stars_notification_title">Your repos have new stars!</string>
     <string name="stars_notification_text">%1$s now has %2$d stars.</string>
 

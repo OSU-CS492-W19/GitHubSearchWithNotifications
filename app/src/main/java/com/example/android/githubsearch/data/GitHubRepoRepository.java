@@ -26,6 +26,10 @@ public class GitHubRepoRepository {
         return mGitHubRepoDao.getAllRepos();
     }
 
+    public List<GitHubRepo> getAllGitHubReposSync() {
+        return mGitHubRepoDao.getAllReposSync();
+    }
+
     public LiveData<GitHubRepo> getGitHubRepoByName(String fullName) {
         return mGitHubRepoDao.getRepoByName(fullName);
     }

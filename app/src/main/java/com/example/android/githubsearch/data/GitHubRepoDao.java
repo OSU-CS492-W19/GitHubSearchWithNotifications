@@ -19,6 +19,9 @@ public interface GitHubRepoDao {
     @Query("SELECT * FROM repos")
     LiveData<List<GitHubRepo>> getAllRepos();
 
+    @Query("SELECT * FROM repos")
+    List<GitHubRepo> getAllReposSync();
+
     @Query("SELECT * FROM repos WHERE full_name = :fullName LIMIT 1")
     LiveData<GitHubRepo> getRepoByName(String fullName);
 }

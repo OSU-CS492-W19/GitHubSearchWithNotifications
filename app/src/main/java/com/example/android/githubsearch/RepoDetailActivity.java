@@ -15,9 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.githubsearch.data.GitHubRepo;
-import com.example.android.githubsearch.utils.GitHubUtils;
 
 public class RepoDetailActivity extends AppCompatActivity {
+
+    public static final String EXTRA_GITHUB_REPO = "GitHubUtils.GitHubRepo";
+
     private TextView mRepoNameTV;
     private TextView mRepoStarsTV;
     private TextView mRepoDescriptionTV;
@@ -41,8 +43,8 @@ public class RepoDetailActivity extends AppCompatActivity {
 
         mRepo = null;
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(GitHubUtils.EXTRA_GITHUB_REPO)) {
-            mRepo = (GitHubRepo) intent.getSerializableExtra(GitHubUtils.EXTRA_GITHUB_REPO);
+        if (intent != null && intent.hasExtra(EXTRA_GITHUB_REPO)) {
+            mRepo = (GitHubRepo) intent.getSerializableExtra(EXTRA_GITHUB_REPO);
             mRepoNameTV.setText(mRepo.full_name);
             mRepoStarsTV.setText("" + mRepo.stargazers_count);
             mRepoDescriptionTV.setText(mRepo.description);

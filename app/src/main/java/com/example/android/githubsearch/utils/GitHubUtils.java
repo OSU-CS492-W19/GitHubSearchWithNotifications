@@ -23,8 +23,6 @@ public class GitHubUtils {
     private final static String GITHUB_SEARCH_IN_DESCRIPTION = "description";
     private final static String GITHUB_SEARCH_IN_README = "readme";
 
-    public static final String EXTRA_GITHUB_REPO = "GitHubUtils.GitHubRepo";
-
     public static class GitHubSearchResults {
         public ArrayList<GitHubRepo> items;
     }

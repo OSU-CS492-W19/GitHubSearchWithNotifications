@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.example.android.githubsearch.data.GitHubRepo;
 import com.example.android.githubsearch.data.Status;
-import com.example.android.githubsearch.utils.GitHubUtils;
 
 import java.util.List;
 
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSearchItemClick(GitHubRepo repo) {
         Intent intent = new Intent(this, RepoDetailActivity.class);
-        intent.putExtra(GitHubUtils.EXTRA_GITHUB_REPO, repo);
+        intent.putExtra(RepoDetailActivity.EXTRA_GITHUB_REPO, repo);
         startActivity(intent);
     }
 

@@ -8,10 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.android.githubsearch.R;
 import com.example.android.githubsearch.RepoDetailActivity;
+import com.example.android.githubsearch.SavedReposActivity;
 import com.example.android.githubsearch.data.GitHubRepo;
 import com.example.android.githubsearch.data.GitHubRepoRepository;
 import com.example.android.githubsearch.utils.GitHubUtils;
@@ -27,6 +29,9 @@ import androidx.work.WorkerParameters;
 public class CheckRepoStarsWorker extends Worker {
 
     private static final String TAG = CheckRepoStarsWorker.class.getSimpleName();
+
+    private static final String STARS_NOTIFICATION_GROUP = "starsNotificationGroup";
+    private static final int STARS_SUMMARY_ID = 0;
 
     private GitHubRepoRepository mRepository;
 
@@ -61,29 +66,65 @@ public class CheckRepoStarsWorker extends Worker {
         return Result.success();
     }
 
-    private void sendNotifications(List<GitHubRepo> repos) {
+    private void sendNotifications(@NonNull List<GitHubRepo> repos) {
         Context context = getApplicationContext();
+
         for (GitHubRepo repo : repos) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
-                    context.getString(R.string.stars_notification_channel));
-
-            builder.setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle(context.getString(R.string.stars_notification_title))
-                    .setContentText(context.getString(R.string.stars_notification_text, repo.full_name,
-                            repo.stargazers_count))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            Intent intent = new Intent(context, RepoDetailActivity.class);
-            intent.putExtra(RepoDetailActivity.EXTRA_GITHUB_REPO, repo);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-            stackBuilder.addNextIntentWithParentStack(intent);
-
-            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(pendingIntent)
-                    .setAutoCancel(true);
-
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.notify(repo.full_name.hashCode(), builder.build());
+            sendIndividualNotification(repo, context);
         }
+
+        if (repos.size() > 1) {
+            sendSummaryNotification(repos, context);
+        }
+    }
+
+    private void sendIndividualNotification(GitHubRepo repo, Context context) {
+        Intent intent = new Intent(context, RepoDetailActivity.class);
+        intent.putExtra(RepoDetailActivity.EXTRA_GITHUB_REPO, repo);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntentWithParentStack(intent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
+                context.getString(R.string.stars_notification_channel));
+        builder.setSmallIcon(R.drawable.ic_github)
+                .setContentTitle(context.getString(R.string.stars_notification_title, repo.full_name))
+                .setContentText(context.getString(R.string.stars_notification_text, repo.full_name,
+                        repo.stargazers_count))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setGroup(STARS_NOTIFICATION_GROUP)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(repo.full_name.hashCode(), builder.build());
+    }
+
+    private void sendSummaryNotification(List<GitHubRepo> repos, Context context) {
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        ArrayList<String> repoNames = new ArrayList<>();
+        for (GitHubRepo repo : repos) {
+            inboxStyle.addLine(context.getString(R.string.stars_notification_text, repo.full_name, repo.stargazers_count));
+            repoNames.add(repo.full_name);
+        }
+
+        Intent intent = new Intent(context, SavedReposActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntentWithParentStack(intent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
+                context.getString(R.string.stars_notification_channel));
+        builder.setSmallIcon(R.drawable.ic_github)
+                .setContentTitle(context.getString(R.string.stars_notification_summary_title, repos.size()))
+                .setContentText(TextUtils.join(", ", repoNames))
+                .setStyle(inboxStyle)
+                .setGroup(STARS_NOTIFICATION_GROUP)
+                .setGroupSummary(true)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(STARS_SUMMARY_ID, builder.build());
     }
 }

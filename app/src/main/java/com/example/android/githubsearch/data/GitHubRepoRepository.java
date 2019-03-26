@@ -22,6 +22,10 @@ public class GitHubRepoRepository {
         new DeleteAsyncTask(mGitHubRepoDao).execute(repo);
     }
 
+    public void updateGitHubRepo(GitHubRepo repo) {
+        new UpdateAsyncTask(mGitHubRepoDao).execute(repo);
+    }
+
     public LiveData<List<GitHubRepo>> getAllGitHubRepos() {
         return mGitHubRepoDao.getAllRepos();
     }
@@ -56,6 +60,19 @@ public class GitHubRepoRepository {
         @Override
         protected Void doInBackground(GitHubRepo... gitHubRepos) {
             mAsyncTaskDao.delete(gitHubRepos[0]);
+            return null;
+        }
+    }
+
+    private static class UpdateAsyncTask extends AsyncTask<GitHubRepo, Void, Void> {
+        private GitHubRepoDao mAsyncTaskDao;
+        UpdateAsyncTask(GitHubRepoDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(GitHubRepo... gitHubRepos) {
+            mAsyncTaskDao.update(gitHubRepos[0]);
             return null;
         }
     }

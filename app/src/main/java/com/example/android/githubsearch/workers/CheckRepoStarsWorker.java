@@ -55,8 +55,9 @@ public class CheckRepoStarsWorker extends Worker {
                 }
                 if (results != null) {
                     GitHubRepo updatedRepo = GitHubUtils.parseGitHubRepoResults(results);
-                    Log.d(TAG, updatedRepo.full_name + " current stars: " + updatedRepo.stargazers_count);
-                    if (updatedRepo.stargazers_count > savedRepo.stargazers_count) {
+                    if (updatedRepo!= null && updatedRepo.stargazers_count > savedRepo.stargazers_count) {
+                        mRepository.updateGitHubRepo(updatedRepo);
+                        Log.d(TAG, updatedRepo.full_name + " current stars: " + updatedRepo.stargazers_count);
                         updatedRepos.add(updatedRepo);
                     }
                 }
